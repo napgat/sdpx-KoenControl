@@ -37,7 +37,7 @@
 **ทำไมเลือก Next.js ทั้งที่คะแนนเท่ากัน:**
 1. Next.js มี Backend ในตัว (API Routes) — ไม่ต้อง deploy แยก 2 ที่
 2. React ecosystem ใหญ่ที่สุด — หาคำตอบ Stack Overflow ได้เร็ว
-3. Vercel (platform ของทีม Next.js) deploy กดปุ่มเดียว + preview URL ทุก PR
+3. Vercel (platform ของทีม Next.js   ) deploy กดปุ่มเดียว + preview URL ทุก PR
 4. shadcn/ui ใช้ Radix UI ทำให้ Radio Button accessible บน mobile ตรงกับ NFR
 
 **ทำไมใช้ TypeScript:**
