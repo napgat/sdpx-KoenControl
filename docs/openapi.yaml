@@ -1,0 +1,179 @@
+openapi: 3.1.0
+info:
+  title: PairEval API
+  description: API contract for the PairEval Pairwise Comparison System
+  version: 1.0.0
+
+servers:
+  - url: /api
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/oidc/start:
+    get:
+      summary: Start Google OIDC login flow
+      security: []
+      responses:
+        '302':
+          description: Redirect to Google
+          
+  /auth/logout:
+    post:
+      summary: End session
+      responses:
+        '200':
+          description: Successfully logged out
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /classrooms:
+    get:
+      summary: List classrooms user belongs to
+      responses:
+        '200':
+          description: Array of classrooms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Classroom'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Create a new classroom
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, timezone]
+              properties:
+                name:
+                  type: string
+                timezone:
+                  type: string
+      responses:
+        '201':
+          description: Classroom created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Classroom'
+        '403':
+          description: Missing FACULTY entitlement
+
+  /classrooms/{id}/assignments:
+    post:
+      summary: Create an assignment for a classroom
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentDraft'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Invalid data
+        '403':
+          description: Not owner or co-teacher
+          
+  /assignments/{id}/submissions:
+    post:
+      summary: Submit a pairwise evaluation choice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [side]
+              properties:
+                side:
+                  type: string
+                  enum: [GROUP, INDIVIDUAL]
+      responses:
+        '201':
+          description: Submission recorded
+        '400':
+          description: Invalid submission
+        '409':
+          description: Conflict (Idempotent replay or deadline passed)
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, requestId]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            field:
+              type: string
+            requestId:
+              type: string
+              
+    Classroom:
+      type: object
+      required: [id, name, slug, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        status:
+          type: string
+          
+    AssignmentDraft:
+      type: object
+      required: [name, slug]
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string

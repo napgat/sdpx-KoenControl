@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// Identity & Classroom — ตาม 05-data-model.md
+// ============================================================
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  DISABLED
+}
+
+enum PlatformRole {
+  USER
+  SYSTEM_ADMIN
+}
+
+model User {
+  id                  String       @id @default(uuid())
+  email_lookup        String       @unique // trim + lowercase เท่านั้น
+  email_raw           String
+  display_name        String?
+  google_sub          String?      @unique
+  status              UserStatus   @default(PENDING)
+  platform_role       PlatformRole @default(USER)
+  can_create_classroom Boolean     @default(false)
+  created_at          DateTime     @default(now())
+  last_login_at       DateTime?
+
+  // Relations
+  classrooms_created  Classroom[]       @relation("ClassroomCreatedBy")
+  classroom_members   ClassroomMember[]
+
+  @@map("user")
+}
+
+enum ClassroomStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+model Classroom {
+  id                    String          @id @default(uuid())
+  name                  String
+  slug                  String          @unique
+  timezone              String          @default("Asia/Bangkok")
+  allowed_email_domains String[]
+  status                ClassroomStatus @default(ACTIVE)
+  created_by_id         String
+  created_at            DateTime        @default(now())
+
+  // Relations
+  created_by   User              @relation("ClassroomCreatedBy", fields: [created_by_id], references: [id])
+  members      ClassroomMember[]
+  groups       GroupEntity[]
+
+  @@map("classroom")
+}
+
+enum ClassroomRole {
+  OWNER
+  CO_TEACHER
+  TA
+  STUDENT
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  WITHDRAWN
+}
+
+model ClassroomMember {
+  id                String           @id @default(uuid())
+  classroom_id      String
+  user_id           String
+  role              ClassroomRole
+  group_id          String?
+  enrollment_status EnrollmentStatus @default(ACTIVE)
+  joined_at         DateTime         @default(now())
+  withdrawn_at      DateTime?
+
+  // Relations
+  classroom Classroom    @relation(fields: [classroom_id], references: [id])
+  user      User         @relation(fields: [user_id], references: [id])
+  group     GroupEntity? @relation(fields: [group_id], references: [id])
+
+  @@unique([classroom_id, user_id])
+  @@map("classroom_member")
+}
+
+model GroupEntity {
+  id           String   @id @default(uuid())
+  classroom_id String
+  name         String
+  created_at   DateTime @default(now())
+
+  // Relations
+  classroom Classroom         @relation(fields: [classroom_id], references: [id])
+  members   ClassroomMember[]
+
+  @@unique([classroom_id, name])
+  @@map("group_entity")
+}

@@ -1,26 +1,20 @@
 "use client";
 
-import { SignInButton } from "@/components/auth/SignInButton";
-
 import React, { useState } from "react";
 import {
   GraduationCap,
   Sparkles,
   ShieldCheck,
-  BarChart3,
-  Users,
   CheckCircle2,
   ArrowRight,
   Save,
-  Send,
   RefreshCw,
-  Award,
-  BookOpen,
   ChevronRight,
   Sliders,
   Layers,
   FileSpreadsheet,
 } from "lucide-react";
+import { SignInButton } from "@/components/auth/SignInButton";
 
 export default function LandingPage() {
   // State for interactive pairwise evaluation demo

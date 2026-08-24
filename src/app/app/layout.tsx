@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Providers } from "@/components/providers";
+import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,8 +12,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-
 
 export const metadata: Metadata = {
   title: "PairEval - University Pairwise Evaluation System",
@@ -31,11 +29,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500 selection:text-white">
-        <Providers>
+        <SessionProvider>
           {children}
-        </Providers>
+        </SessionProvider>
       </body>
     </html>
   );
 }
-
