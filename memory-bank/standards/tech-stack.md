@@ -122,7 +122,7 @@
 
 - Platform: Vercel
 - Database Host: Neon.tech (Serverless PostgreSQL)
-- Staging URL: [จะเพิ่มหลัง deploy]
+- Staging URL: https://sdpx-koen-control.vercel.app/
 
 ### Rationale
 
