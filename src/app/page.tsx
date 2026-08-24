@@ -296,6 +296,7 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 md:grid-cols-11 gap-4 items-center mb-8">
                 {/* Candidate A Card */}
                 <div
+                  data-testid="candidate-a-card"
                   onClick={() => handleSelect("A")}
                   className={`md:col-span-5 p-5 rounded-2xl border cursor-pointer transition-all ${
                     selectedWinner === "A"
@@ -334,6 +335,7 @@ export default function LandingPage() {
                     VS
                   </div>
                   <button
+                    data-testid="tie-button"
                     onClick={() => handleSelect("equal")}
                     className={`mt-2 text-[11px] px-2.5 py-1 rounded-lg border transition-all ${
                       selectedWinner === "equal"
@@ -347,6 +349,7 @@ export default function LandingPage() {
 
                 {/* Candidate B Card */}
                 <div
+                  data-testid="candidate-b-card"
                   onClick={() => handleSelect("B")}
                   className={`md:col-span-5 p-5 rounded-2xl border cursor-pointer transition-all ${
                     selectedWinner === "B"
@@ -394,6 +397,7 @@ export default function LandingPage() {
 
                 <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
                   <button
+                    data-testid="save-draft-btn"
                     onClick={handleSave}
                     disabled={!selectedWinner}
                     className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 disabled:opacity-50 transition-all"
@@ -403,6 +407,7 @@ export default function LandingPage() {
                   </button>
 
                   <button
+                    data-testid="next-pair-btn"
                     onClick={handleNext}
                     disabled={!selectedWinner}
                     className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-indigo-600/30 disabled:opacity-50 transition-all"
